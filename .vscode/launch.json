@@ -12,6 +12,21 @@
                 "--server.port",
                 "8501"
             ],
+        },
+        {
+            "name": "Python: Remote Attach",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 9001
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/src",
+                    "remoteRoot": "/app/src"
+                }
+            ]
         }
     ]
 }

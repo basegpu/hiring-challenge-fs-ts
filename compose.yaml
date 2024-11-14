@@ -1,0 +1,13 @@
+services:
+  ts-viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+      - "9001:9001"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - STREAMLIT_ENV=production
+      - DEBUG=1
