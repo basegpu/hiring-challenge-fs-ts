@@ -76,11 +76,11 @@ else:
     st.plotly_chart(fig, use_container_width=True)
     
     # Export button
-    if st.button("Export Data"):
-        csv = filtered_df.to_csv(index=False)
+    with st.expander("Export Figure"):
+        file_name = st.text_input("Enter file name", value="time_series")
+        file_format = st.selectbox("Select file format", options=["pdf", "png", "jpeg", "svg"])
         st.download_button(
-            label="Download CSV",
-            data=csv,
-            file_name="time_series_export.csv",
-            mime="text/csv"
+            label="Download",
+            data=fig.to_image(format=file_format),
+            file_name=f"{file_name}.{file_format}"
         )
