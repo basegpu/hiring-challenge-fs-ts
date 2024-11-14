@@ -24,5 +24,5 @@ The idea is have the most simple solution that works. From there multiple improv
 
 | Date       | Hours | What |
 |------------|-------|------|
-| 2024-11-14 | 0.2 | Initial setup and planning |
+| 2024-11-14 | 1.0 | Initial setup, planning, streamlit app |
 
