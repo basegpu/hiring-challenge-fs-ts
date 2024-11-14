@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from data_loading import load_measurements, load_assets, load_signals
+from data_loading import load_measurements, load_assets, load_signals, Signal
 
 
 # Page config
@@ -16,14 +16,15 @@ st.title("Time Series Viewer")
 
 # Load data
 @st.cache_data
-def cached_load_data() -> pd.DataFrame:
+def cached_load_data(signals: list[int]) -> pd.DataFrame:
     try:
-        return load_measurements()
+        data_df = load_measurements()
+        return data_df[
+            data_df["SignalId"].isin(signals)
+        ].sort_values(by="Ts")
     except Exception as e:
         st.error(e)
         return pd.DataFrame()
-
-data_df = cached_load_data()
     
 # Sidebar controls
 with st.sidebar:
@@ -51,10 +52,7 @@ if not selected_signals:
     st.stop()
 
 # Filter data based on selection
-filtered_df = data_df[
-    (data_df["SignalId"].isin([signal.id for signal in selected_signals]))
-].sort_values(by="Ts")
-
+filtered_df = cached_load_data([signal.id for signal in selected_signals])
 
 # Plot
 if filtered_df.empty:
