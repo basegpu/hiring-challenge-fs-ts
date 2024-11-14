@@ -14,15 +14,23 @@ The idea is have the most simple solution that works. From there multiple improv
 
 ## Improvements
 
-1. Use docker and docker compose
-2. Add backend for adding and retrieving data (fastapi)
-3. Add frontend framework (typescript/react)
-4. Add DB for storing assets and signals (postgres)
-5. Add message queue for realtime data updates (rabbitmq)
+### Containerization
+Using docker and docker compose. see [the Dockerfile](./Dockerfile) and [the compose file](./compose.yaml).
+
+- run app with `docker compose up --build ts-viewer`
+- run app with debugger `docker compose up --build ts-viewer-debug`
+
+### Not covered yet
+- Add backend for adding and retrieving data (netcore)
+- Add DB for storing assets and signals (postgres)
+- Add frontend framework (typescript/react)
+- Add message queue for realtime data updates (rabbitmq)
 
 ## Time spent
 
 | Date       | Hours | What |
 |------------|-------|------|
-| 2024-11-14 | 1.0 | Initial setup, planning, streamlit app |
+| 2024-11-14 | 0.5 | familiarize with challenge, planning |
+| 2024-11-14 | 1.0 | Streamlit app, vscode debugging |
+| 2024-11-14 | 0.5 | Containerization, Dockerfile, compose file |
 
