@@ -1,6 +1,6 @@
 # Fullstack Time Series Challenge
 
-The original challenge is described [here](./challenge).
+The original challenge is described [here](./challenge/README.md).
 
 ## Most simple solution
 
