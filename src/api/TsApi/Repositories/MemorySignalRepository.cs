@@ -1,6 +1,9 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.IO;
+using System;
 using TsApi.Interfaces;
 using TsApi.Models;
 
@@ -8,6 +11,17 @@ namespace TsApi.Repositories
 {
     public class MemorySignalRepository : ISignalRepository
     {
+        public MemorySignalRepository()
+        {
+            var jsonPath = Path.Combine(AppContext.BaseDirectory, "data", "signals.json");
+            var json = File.ReadAllText(jsonPath);
+            var signals = JsonConvert.DeserializeObject<List<Signal>>(json);
+            foreach (var signal in signals)
+            {
+                _signals[signal.Id] = signal;
+            }
+        }
+
         private readonly Dictionary<int, Signal> _signals = new();
 
         public Task<IEnumerable<Signal>> GetAllAsync()
