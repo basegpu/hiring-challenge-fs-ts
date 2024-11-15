@@ -1,7 +1,8 @@
 x-common-service: &common-service
   build:
-    context: .
+    context: ./src/streamlit
     dockerfile: Dockerfile
+    target: streamlit
   ports:
     - "8501:8501"
   volumes:

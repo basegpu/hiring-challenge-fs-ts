@@ -4,7 +4,8 @@ The original challenge is described [here](./challenge/README.md).
 
 ## Most simple solution
 
-The idea is to have the most simple solution that "just works". From there multiple improvements will/can be made.
+The idea is to have the most simple solution that "just works".
+From there multiple improvements will/can be made.
 
 1. Single page application with streamlit
 2. data is loaded into memory
@@ -15,13 +16,13 @@ The idea is to have the most simple solution that "just works". From there multi
 ## Improvements
 
 ### Containerization
-Using docker and docker compose. See [the Dockerfile](./Dockerfile) and [the compose file](./compose.yaml).
+Using docker and docker compose. See all Dockerfiles and the [compose file](./compose.yaml).
 
 - run app with `docker compose up --build ts-viewer`
 - run app with debugger `docker compose up --build ts-viewer-debug`
 
 ### REST API for adding and retrieving data
-The backend API is implemented in .NET Core. See [the API project](./api).
+The backend API is implemented in .NET Core. See [the API project](./src/api).
 
 The endpoints are:
 - `GET /api/assets` (all assets)

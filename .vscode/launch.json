@@ -8,7 +8,7 @@
             "module": "streamlit",
             "args": [
                 "run",
-                "src/app.py",
+                "src/streamlit/src/app.py",
                 "--server.port",
                 "8501"
             ],
@@ -23,8 +23,8 @@
             },
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}/src",
-                    "remoteRoot": "/app/src"
+                    "localRoot": "${workspaceFolder}/src/streamlit/src",
+                    "remoteRoot": "/app/src/"
                 }
             ]
         }
