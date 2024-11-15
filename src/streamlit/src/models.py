@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, Field, AliasChoices
 
 
@@ -20,3 +21,12 @@ class Signal(BaseModel):
 
     def __str__(self):
         return f"{self.name} ({self.unit})"
+
+
+class Measurement(BaseModel):
+    signal_id: int = Field(..., validation_alias=AliasChoices("SignalId", "signalId"), description="The unique identifier for the signal")
+    timestamp: datetime = Field(..., validation_alias=AliasChoices("Ts", "timestamp"), description="The timestamp of the measurement taken")
+    value: float = Field(..., validation_alias=AliasChoices("MeasurementValue", "value"), description="The value of the measurement")
+
+    def __str__(self):
+        return f"{self.timestamp} - {self.value}"

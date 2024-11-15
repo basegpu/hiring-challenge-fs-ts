@@ -19,9 +19,10 @@ st.title("Time Series Viewer")
 
 # Load data
 @st.cache_data
-def cached_load_data(signals: list[int]) -> pd.DataFrame:
+def load_measurements_for_signal(signal_id: int) -> pd.DataFrame:
     try:
-        return provider.measurements(signals)
+        measurements = provider.measurements(signal_id)
+        return pd.DataFrame([m.model_dump() for m in measurements]).sort_values(by="timestamp")
     except Exception as e:
         st.error(e)
         return pd.DataFrame()
@@ -105,7 +106,10 @@ if not selected_signal_ids:
 
 # Filter data based on selection
 selected_signals = [signal for signal in signals() if signal.id in selected_signal_ids]
-filtered_df = cached_load_data(selected_signal_ids)
+filtered_df = pd.concat([
+    load_measurements_for_signal(signal_id)
+    for signal_id in selected_signal_ids
+])
 
 # Plot
 if filtered_df.empty:
@@ -113,13 +117,13 @@ if filtered_df.empty:
 else:
     fig = px.line(
         filtered_df,
-        x="Ts",
-        y="MeasurementValue",
-        color="SignalId",
+        x="timestamp",
+        y="value",
+        color="signal_id",
         title="Time Series Data",
         labels={
-            "Ts": "Timestamp",
-            "MeasurementValue": "Value"
+            "timestamp": "Timestamp",
+            "value": "Value"
         },
     )
     fig.for_each_trace(lambda t: t.update(name = next(

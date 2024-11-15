@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python:Streamlit",
+            "name": "streamlit local",
             "type": "debugpy",
             "request": "launch",
             "module": "streamlit",
@@ -13,12 +13,13 @@
                 "8501"
             ],
             "env": {
-                "DATA_PROVIDER": "LOCAL",
-                "DATA_PATH": "${workspaceFolder}/data"
+                "DATA_PROVIDER": "${input:provider}",
+                "DATA_PATH": "${workspaceFolder}/data",
+                "DATA_HOST": "http://localhost:8080"
             }
         },
         {
-            "name": "Python: Remote Attach",
+            "name": "streamlit remote attach",
             "type": "python",
             "request": "attach",
             "connect": {
@@ -43,6 +44,12 @@
                 "local-data-debug",
                 "remote-data-debug"
             ]
+        },
+        {
+            "id": "provider",
+            "description": "Data provider",
+            "type": "pickString",
+            "options": ["LOCAL", "REMOTE"]
         }
     ]
 }

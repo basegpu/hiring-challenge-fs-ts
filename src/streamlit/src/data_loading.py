@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import requests
 from typing import List, TypeVar, Type
-from models import Asset, Signal
+from models import Asset, Signal, Measurement
 from settings import settings
 
 
@@ -28,12 +28,12 @@ class DataProvider:
         """
         raise NotImplementedError
     
-    def measurements(self, signals: List[int]) -> pd.DataFrame:
+    def measurements(self, signal_id: int) -> List[Measurement]:
         """
-        Load measurements from data source
+        Load measurements from data source for a given signal id.
         
         Returns:
-            pd.DataFrame
+            List[Measurement]
         """
         raise NotImplementedError
 
@@ -83,14 +83,15 @@ class LocalDataProvider(DataProvider):
             raise Exception(f"Error loading data: {e}")
 
 
-    def measurements(self, signals: List[int]) -> pd.DataFrame:
-        """
-        Load measurements data from CSV file, filter by signal ids and sort by timestamp
-        """
+    def measurements(self, signal_id: int) -> List[Measurement]:
+        """Load measurements data from CSV file"""
         data_df = self.load_csv_data("measurements.csv", delimiter="|")
-        return data_df[
-            data_df["SignalId"].isin(signals)
-        ].sort_values(by="Ts")
+        return [
+            Measurement(**row)
+            for _, row in data_df[
+                data_df["SignalId"] == signal_id
+            ].iterrows()
+        ]
 
 
 class RemoteDataProvider(DataProvider):
@@ -122,10 +123,12 @@ class RemoteDataProvider(DataProvider):
         """Load signals from API"""
         return self._make_typed_request("signals", Signal)
     
-    def measurements(self, signals: List[int]) -> pd.DataFrame:
+    def measurements(self, signal_id: int) -> List[Measurement]:
         """Load measurements from API"""
-        # TODO: get data for all signals and concat into a single DataFrame
-        return pd.DataFrame()
+        return [
+            Measurement(**item)
+            for item in self._make_request(f"data?signalId={signal_id}")
+        ]
 
 
 class DataProviderFactory:
