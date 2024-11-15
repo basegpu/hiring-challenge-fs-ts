@@ -25,6 +25,9 @@ Using docker and docker compose. See all Dockerfiles and the [compose file](./co
 ### REST API for adding and retrieving data
 The backend API is implemented in .NET Core. See [the API project](./src/api).
 
+- run app pointing to API with in-memory data with `docker compose up --build app-api-local`
+- run app pointing to API with in-memory data and debugger with `docker compose up --build app-api-local-debug`
+
 The endpoints are:
 - `GET /api/assets` (all assets)
 - `GET /api/assets/{assetId}` (single asset)

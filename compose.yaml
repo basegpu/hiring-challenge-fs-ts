@@ -25,8 +25,35 @@ services:
       - DATA_PROVIDER=LOCAL
       - DATA_PATH=./data
       - DEBUG=1
+  
+  app-api-local:
+    build:
+      context: ./src/streamlit
+      dockerfile: Dockerfile
+    ports:
+      - "8504:8501"
+    environment:
+      - STREAMLIT_ENV=production
+      - DATA_PROVIDER=REMOTE
+      - DATA_HOST=http://api-local:8080
+    depends_on:
+      - api-local
+  
+  app-api-local-debug:
+    build:
+      context: ./src/streamlit
+      dockerfile: Dockerfile
+    ports:
+      - "8505:8501"
+      - "9001:9001"
+    environment:
+      - DATA_PROVIDER=REMOTE
+      - DATA_HOST=http://api-local:8080
+      - DEBUG=1
+    depends_on:
+      - api-local
 
-  ts-api:
+  api-local:
     build:
       context: ./src/api
       dockerfile: Dockerfile
@@ -34,3 +61,9 @@ services:
       - "8080:8080"
     volumes:
       - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 3s

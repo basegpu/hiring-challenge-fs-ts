@@ -40,7 +40,8 @@
             "description": "Start Docker Compose",
             "type": "pickString",
             "options": [
-                "local-data-debug"
+                "local-data-debug",
+                "remote-data-debug"
             ]
         }
     ]

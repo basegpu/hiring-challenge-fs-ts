@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from pathlib import Path
+import requests
 from typing import List, TypeVar, Type
 from models import Asset, Signal
 from settings import settings
@@ -92,6 +93,15 @@ class LocalDataProvider(DataProvider):
 
 
 class RemoteDataProvider(DataProvider):
+    _data_host: str
+
+    def __init__(self, data_host: str):
+        self._data_host = data_host
+        response = requests.get(f"{self._data_host}/api/health")
+        if response.status_code != 200:
+            raise Exception(f"Health check failed with status code {response.status_code}")
+        
+
     def assets(self) -> List[Asset]:
         return []
 
@@ -102,7 +112,10 @@ class RemoteDataProvider(DataProvider):
         return pd.DataFrame()
 
 
-if settings.data_provider == "remote":
-    provider = RemoteDataProvider()
-else:
-    provider = LocalDataProvider(data_path=settings.data_path)
+class DataProviderFactory:
+    @staticmethod
+    def make() -> DataProvider:
+        if settings.data_provider.lower() == "remote":
+            return RemoteDataProvider(data_host=settings.data_host)
+        else:
+            return LocalDataProvider(data_path=settings.data_path)

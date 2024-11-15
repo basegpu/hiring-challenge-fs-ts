@@ -10,6 +10,16 @@
             "label": "local-data",
             "command": "docker compose up -d --build --remove-orphans app-local",
             "type": "shell"
+        },
+        {
+            "label": "remote-data",
+            "command": "docker compose up -d --build --remove-orphans app-api-local",
+            "type": "shell"
+        },
+        {
+            "label": "remote-data-debug",
+            "command": "docker compose up -d --build --remove-orphans app-api-local-debug",
+            "type": "shell"
         }
     ]
 }

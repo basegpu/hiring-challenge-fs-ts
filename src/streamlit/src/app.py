@@ -2,9 +2,10 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 from streamlit_tree_select import tree_select
-from data_loading import provider
+from data_loading import DataProviderFactory
 from models import Asset, Signal
 
+provider = DataProviderFactory.make()
 
 # Page config
 st.set_page_config(
