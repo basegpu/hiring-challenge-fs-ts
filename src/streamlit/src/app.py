@@ -25,6 +25,20 @@ def cached_load_data(signals: list[int]) -> pd.DataFrame:
     except Exception as e:
         st.error(e)
         return pd.DataFrame()
+
+# Map of assets
+st.subheader("Asset Locations")
+map_data = pd.DataFrame(
+    [(asset.id, asset.latitude, asset.longitude, asset.description) for asset in load_assets()],
+    columns=['id', 'latitude', 'longitude', 'name']
+)
+st.map(
+    data=map_data,
+    latitude='latitude',
+    longitude='longitude'
+)
+# TODO: Add tooltips and interactivity to map
+
     
 # Sidebar controls
 with st.sidebar:
@@ -46,6 +60,7 @@ with st.sidebar:
         "Select Signals",
         options=signal_for_assets
     )
+
 
 if not selected_signals:
     st.warning("Please select at least one signal to display data.")

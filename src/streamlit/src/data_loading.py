@@ -6,7 +6,7 @@ import pandas as pd
 
 
 T = TypeVar('T', Asset, Signal)
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent.parent.parent.parent / "data"
 
 
 def load_json_data(model_class: Type[T], filename: str) -> List[T]:
