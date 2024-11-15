@@ -44,6 +44,7 @@ potentially for adding data:
 - Add DB for storing assets and signals (postgres)
 - Add frontend framework (typescript/react)
 - Add message queue for realtime data updates (rabbitmq)
+- testing strategy
 
 ## Time spent
 
@@ -53,4 +54,4 @@ potentially for adding data:
 | 2024-11-14 | 1.0 | Streamlit app, vscode debugging |
 | 2024-11-14 | 0.5 | Containerization, Dockerfile, compose file |
 | 2024-11-15 | 2.0 | REST API, API project |
-| 2024-11-15 | 0.5 | hooking-up app to API |
+| 2024-11-15 | 1.0 | hooking-up app to API |
