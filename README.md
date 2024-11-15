@@ -30,6 +30,7 @@ The endpoints are:
 - `GET /api/signals` (all signals)
 - `GET /api/signals?assetId={assetId}` (all signals for asset)
 - `GET /api/signals/{signalId}` (single signal)
+- `GET /api/data?signalId={signalId}&from={from}&to={to}` (data for signal)
 
 potentially for adding data:
 - `POST /api/assets`

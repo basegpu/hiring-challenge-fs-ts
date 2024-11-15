@@ -30,7 +30,8 @@ namespace TsApi
             app.MapGroup("api")
                 .MapUtilsEndpoints()
                 .MapAssetEndpoints()
-                .MapSignalEndpoints();
+                .MapSignalEndpoints()
+                .MapDataEndpoints();
 
             app.Run();
         }
