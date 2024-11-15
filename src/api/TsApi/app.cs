@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using TsApi.Endpoints;
+using TsApi.Interfaces;
+using TsApi.Repositories;
 
 namespace TsApi
 {
@@ -12,7 +15,10 @@ namespace TsApi
             // Add services
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddHealthChecks();
+
+            builder.Services.AddSingleton<IAssetRepository, MemoryAssetRepository>();
+            builder.Services.AddSingleton<ISignalRepository, MemorySignalRepository>();
+            builder.Services.AddSingleton<IDataRepository, MemoryDataRepository>();
 
             var app = builder.Build();
 
@@ -21,7 +27,10 @@ namespace TsApi
             app.UseSwaggerUI();
 
             // Map endpoints
-            app.MapHealthChecks("/health");
+            app.MapGroup("api")
+                .MapUtilsEndpoints()
+                .MapAssetEndpoints()
+                .MapSignalEndpoints();
 
             app.Run();
         }
