@@ -19,8 +19,8 @@ From there multiple improvements will/can be made.
 ### Containerization
 Using docker and docker compose. See all Dockerfiles and the [compose file](./compose.yaml).
 
-- run app with `docker compose up --build ts-viewer`
-- run app with debugger `docker compose up --build ts-viewer-debug`
+- run app with `docker compose up --build app-local`
+- run app with debugger `docker compose up --build app-local-debug`
 
 ### REST API for adding and retrieving data
 The backend API is implemented in .NET Core. See [the API project](./src/api).

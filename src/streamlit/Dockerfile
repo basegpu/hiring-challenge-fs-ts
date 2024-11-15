@@ -1,4 +1,4 @@
-FROM python:3.12-slim AS streamlit
+FROM python:3.12-slim
 WORKDIR /app
 
 ADD requirements.txt .

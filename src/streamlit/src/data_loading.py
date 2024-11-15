@@ -1,63 +1,108 @@
 import json
-from pathlib import Path
-from typing import List, TypeVar, Type, Tuple
-from models import Asset, Signal
 import pandas as pd
+from pathlib import Path
+from typing import List, TypeVar, Type
+from models import Asset, Signal
+from settings import settings
 
 
-T = TypeVar('T', Asset, Signal)
-DATA_DIR = Path(__file__).parent.parent.parent.parent / "data"
-
-
-def load_json_data(model_class: Type[T], filename: str) -> List[T]:
-    """
-    Generic function to load and parse JSON data into model instances
-    
-    Args:
-        model_class: The class to instantiate (Asset or Signal)
-        filename: Name of the JSON file to load
+class DataProvider:
+    def assets(self) -> List[Asset]:
+        """
+        Load assets from data source
         
-    Returns:
-        List of model instances
-    """
-    try:
-        file_path = DATA_DIR / filename
+        Returns:
+            List[Asset]
+        """
+        raise NotImplementedError
+
+    def signals(self) -> List[Signal]:
+        """
+        Load signals from data source
         
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-    except Exception as e:
-        raise Exception(f"Error loading data: {e}")
+        Returns:
+            List[Signal]
+        """
+        raise NotImplementedError
     
-    return [model_class(**item) for item in data]
+    def measurements(self, signals: List[int]) -> pd.DataFrame:
+        """
+        Load measurements from data source
+        
+        Returns:
+            pd.DataFrame
+        """
+        raise NotImplementedError
 
 
-def load_assets() -> List[Asset]:
-    """Load assets from JSON file"""
-    return load_json_data(Asset, "assets.json")
+class LocalDataProvider(DataProvider):
+    T = TypeVar('T', Asset, Signal)
+    _data_dir: Path
+
+    def __init__(self, data_path: str):
+        self._data_dir = Path(data_path)
+
+    def load_json_data(self, model_class: Type[T], filename: str) -> List[T]:
+        """
+        Generic function to load and parse JSON data into model instances
+        
+        Args:
+            model_class: The class to instantiate (Asset or Signal)
+            filename: Name of the JSON file to load
+            
+        Returns:
+            List of model instances
+        """
+        file_path = self._data_dir / filename
+        try:
+            with open(file_path, 'r') as f:
+                data = json.load(f)
+        except Exception as e:
+            raise Exception(f"Error loading data: {e}")
+        
+        return [model_class(**item) for item in data]
 
 
-def load_signals() -> List[Signal]:
-    """Load signals from JSON file"""
-    return load_json_data(Signal, "signals.json")
+    def assets(self) -> List[Asset]:
+        """Load assets from JSON file"""
+        return self.load_json_data(Asset, "assets.json")
 
 
-def load_csv_data(filename: str, delimiter: str = ",") -> pd.DataFrame:
-    """
-    Load data from CSV file.
+    def signals(self) -> List[Signal]:
+        """Load signals from JSON file"""
+        return self.load_json_data(Signal, "signals.json")
 
-    Returns:
-        pd.DataFrame: DataFrame containing the loaded data
-    """
-    try:
-        return pd.read_csv(DATA_DIR / filename, delimiter=delimiter, decimal=",")
-    except Exception as e:
-        raise Exception(f"Error loading data: {e}")
 
-def load_measurements() -> pd.DataFrame:
-    """
-    Load measurements data from CSV file
+    def load_csv_data(self, filename: str, delimiter: str = ",") -> pd.DataFrame:
+        """Load data from CSV file"""
+        try:
+            return pd.read_csv(self._data_dir / filename, delimiter=delimiter, decimal=",")
+        except Exception as e:
+            raise Exception(f"Error loading data: {e}")
+
+
+    def measurements(self, signals: List[int]) -> pd.DataFrame:
+        """
+        Load measurements data from CSV file, filter by signal ids and sort by timestamp
+        """
+        data_df = self.load_csv_data("measurements.csv", delimiter="|")
+        return data_df[
+            data_df["SignalId"].isin(signals)
+        ].sort_values(by="Ts")
+
+
+class RemoteDataProvider(DataProvider):
+    def assets(self) -> List[Asset]:
+        return []
+
+    def signals(self) -> List[Signal]:
+        return []
     
-    Returns:
-        pd.DataFrame: DataFrame containing the loaded measurements data (timestamp, signal id, value)
-    """
-    return load_csv_data("measurements.csv", delimiter="|")
+    def measurements(self, signals: List[int]) -> pd.DataFrame:
+        return pd.DataFrame()
+
+
+if settings.data_provider == "remote":
+    provider = RemoteDataProvider()
+else:
+    provider = LocalDataProvider(data_path=settings.data_path)

@@ -12,6 +12,10 @@
                 "--server.port",
                 "8501"
             ],
+            "env": {
+                "DATA_PROVIDER": "LOCAL",
+                "DATA_PATH": "${workspaceFolder}/data"
+            }
         },
         {
             "name": "Python: Remote Attach",
@@ -26,6 +30,17 @@
                     "localRoot": "${workspaceFolder}/src/streamlit/src",
                     "remoteRoot": "/app/src/"
                 }
+            ],
+            "preLaunchTask": "${input:compose-up}"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "compose-up",
+            "description": "Start Docker Compose",
+            "type": "pickString",
+            "options": [
+                "local-data-debug"
             ]
         }
     ]

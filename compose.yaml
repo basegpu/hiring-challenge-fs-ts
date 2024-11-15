@@ -1,25 +1,29 @@
-x-common-service: &common-service
-  build:
-    context: ./src/streamlit
-    dockerfile: Dockerfile
-    target: streamlit
-  ports:
-    - "8501:8501"
-  volumes:
-    - ./data:/app/data
-
 services:
-  ts-viewer:
-    <<: *common-service
+  app-local:
+    build:
+      context: ./src/streamlit
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/app/data
     environment:
       - STREAMLIT_ENV=production
-  
-  ts-viewer-debug:
-    <<: *common-service
+      - DATA_PROVIDER=LOCAL
+      - DATA_PATH=./data
     ports:
-      - "8501:8501" 
+      - "8502:8501"
+  
+  app-local-debug:
+    build:
+      context: ./src/streamlit
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "8503:8501" 
       - "9001:9001"
     environment:
+      - DATA_PROVIDER=LOCAL
+      - DATA_PATH=./data
       - DEBUG=1
 
   ts-api:

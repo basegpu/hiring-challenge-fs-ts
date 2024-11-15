@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 from streamlit_tree_select import tree_select
-from data_loading import load_measurements, load_assets, load_signals
+from data_loading import provider
 from models import Asset, Signal
 
 
@@ -20,21 +20,26 @@ st.title("Time Series Viewer")
 @st.cache_data
 def cached_load_data(signals: list[int]) -> pd.DataFrame:
     try:
-        data_df = load_measurements()
-        return data_df[
-            data_df["SignalId"].isin(signals)
-        ].sort_values(by="Ts")
+        return provider.measurements(signals)
     except Exception as e:
         st.error(e)
         return pd.DataFrame()
 
 @st.cache_data
 def assets() -> list[Asset]:
-    return load_assets()
+    try:
+        return provider.assets()
+    except Exception as e:
+        st.error(e)
+        return []
 
 @st.cache_data
 def signals() -> list[Signal]:
-    return load_signals()
+    try:
+        return provider.signals()
+    except Exception as e:
+        st.error(e)
+        return []
 
 @st.cache_data
 def tree_data() -> list[dict]:
