@@ -7,6 +7,8 @@ from models import Asset, Signal
 from settings import settings
 
 
+T = TypeVar('T', Asset, Signal)
+
 class DataProvider:
     def assets(self) -> List[Asset]:
         """
@@ -37,7 +39,6 @@ class DataProvider:
 
 
 class LocalDataProvider(DataProvider):
-    T = TypeVar('T', Asset, Signal)
     _data_dir: Path
 
     def __init__(self, data_path: str):
@@ -100,15 +101,30 @@ class RemoteDataProvider(DataProvider):
         response = requests.get(f"{self._data_host}/api/health")
         if response.status_code != 200:
             raise Exception(f"Health check failed with status code {response.status_code}")
-        
+    
+    def _make_request(self, endpoint: str) -> list[dict]:
+        """Make a request to the API and return the JSON response"""
+        response = requests.get(f"{self._data_host}/api/{endpoint}")
+        if response.status_code != 200:
+            raise Exception(f"Error loading {endpoint}: {response.status_code}")
+        return response.json()
+    
+    def _make_typed_request(self, endpoint: str, model_class: Type[T]) -> List[T]:
+        """Make a request to the API and return a list of typed objects"""
+        data = self._make_request(endpoint)
+        return [model_class(**item) for item in data]
 
     def assets(self) -> List[Asset]:
-        return []
-
+        """Load assets from API"""
+        return self._make_typed_request("assets", Asset)
+    
     def signals(self) -> List[Signal]:
-        return []
+        """Load signals from API"""
+        return self._make_typed_request("signals", Signal)
     
     def measurements(self, signals: List[int]) -> pd.DataFrame:
+        """Load measurements from API"""
+        # TODO: get data for all signals and concat into a single DataFrame
         return pd.DataFrame()
 
 
