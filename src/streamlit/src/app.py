@@ -1,7 +1,9 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from data_loading import load_measurements, load_assets, load_signals, Signal
+from streamlit_tree_select import tree_select
+from data_loading import load_measurements, load_assets, load_signals
+from models import Asset, Signal
 
 
 # Page config
@@ -26,48 +28,78 @@ def cached_load_data(signals: list[int]) -> pd.DataFrame:
         st.error(e)
         return pd.DataFrame()
 
-# Map of assets
-st.subheader("Asset Locations")
-map_data = pd.DataFrame(
-    [(asset.id, asset.latitude, asset.longitude, asset.description) for asset in load_assets()],
-    columns=['id', 'latitude', 'longitude', 'name']
-)
-st.map(
-    data=map_data,
-    latitude='latitude',
-    longitude='longitude'
-)
-# TODO: Add tooltips and interactivity to map
+@st.cache_data
+def assets() -> list[Asset]:
+    return load_assets()
 
-    
-# Sidebar controls
-with st.sidebar:
-    st.header("Controls")
-    
-    # Asset selection
-    selected_assets = st.multiselect(
-        "Select Assets",
-        options=load_assets()
-    )
+@st.cache_data
+def signals() -> list[Signal]:
+    return load_signals()
 
-    signal_for_assets = [
-        signal for signal in load_signals()
-        if signal.asset_id in [asset.id for asset in selected_assets]
+@st.cache_data
+def tree_data() -> list[dict]:
+    return [
+        {
+            "label": str(asset),
+            "value": asset.id,
+            "children": [
+                {
+                    "label": str(signal),
+                    "value": signal.id
+                }
+                for signal in signals()
+                if signal.asset_id == asset.id
+            ]
+        }
+        for asset in assets()
     ]
+
+# Container for selection and map
+with st.container():
+    # Create two columns
+    col1, col2 = st.columns([1, 1])
     
-    # Signal selection
-    selected_signals = st.multiselect(
-        "Select Signals",
-        options=signal_for_assets
-    )
+    with col2:
+        # Signal selection
+        st.subheader("Signal Selection")
+        st.caption("Select signals to display on the plot")
+        return_select = tree_select(tree_data(), check_model="leaf")
+        selected_signal_ids = [
+            int(value)
+            for value in return_select['checked']
+        ]
+        selected_asset_ids = list(set([
+            signal.asset_id
+            for signal in signals()
+            if signal.id in selected_signal_ids
+        ]))
+
+    with col1:
+        # Map of assets
+        st.subheader("Asset Locations")
+        map_data = pd.DataFrame(
+            [(
+                asset.latitude,
+                asset.longitude,
+                '#ff0000' if asset.id in selected_asset_ids else '#0000ff'
+            ) for asset in assets()],
+            columns=['latitude', 'longitude', 'color']
+        )
+        st.map(
+            data=map_data,
+            latitude='latitude',
+            longitude='longitude',
+            color='color'
+        )
 
 
-if not selected_signals:
+if not selected_signal_ids:
     st.warning("Please select at least one signal to display data.")
     st.stop()
 
 # Filter data based on selection
-filtered_df = cached_load_data([signal.id for signal in selected_signals])
+selected_signals = [signal for signal in signals() if signal.id in selected_signal_ids]
+filtered_df = cached_load_data(selected_signal_ids)
 
 # Plot
 if filtered_df.empty:

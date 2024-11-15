@@ -10,8 +10,9 @@ From there multiple improvements will/can be made.
 1. Single page application with streamlit
 2. data is loaded into memory
 3. dropdowns with checkboxes for assets and signals
-4. plotly chart with time series
-5. export button
+4. map of assets (and colored by selected signals)
+5. plotly chart with time series
+6. export button
 
 ## Improvements
 
@@ -48,4 +49,4 @@ potentially for adding data:
 | 2024-11-14 | 0.5 | familiarize with challenge, planning |
 | 2024-11-14 | 1.0 | Streamlit app, vscode debugging |
 | 2024-11-14 | 0.5 | Containerization, Dockerfile, compose file |
-
+| 2024-11-15 | 2.0 | REST API, API project |
