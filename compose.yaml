@@ -74,8 +74,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8080"
-    volumes:
-      - ./data:/app/data
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=timeseries
+      - DB_USER=postgres
+      - DB_PASSWORD=postgrespw
     depends_on:
       - db
     healthcheck:

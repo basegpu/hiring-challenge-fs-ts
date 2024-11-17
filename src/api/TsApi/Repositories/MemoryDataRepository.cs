@@ -14,8 +14,10 @@ namespace TsApi.Repositories
         public MemoryDataRepository()
         {
             var jsonPath = Path.Combine(AppContext.BaseDirectory, "data", "measurements.csv");
-            _data = File.ReadAllLines(jsonPath)
-                .Skip(1)
+            if (File.Exists(jsonPath))
+            {
+                _data = File.ReadAllLines(jsonPath)
+                    .Skip(1)
                 .Select(line => line.Split('|'))
                 .Select(columns =>
                 {
@@ -34,8 +36,9 @@ namespace TsApi.Repositories
                         Console.WriteLine($"Error parsing line: {string.Join('|', columns)} - {ex.Message}");
                         return null;
                     }
-                })
-                .Where(data => data != null); // Filter out null entries
+                    })
+                    .Where(data => data != null); // Filter out null entries
+            }
         }
 
         private readonly IEnumerable<TimeSeriesData> _data = new List<TimeSeriesData>();
