@@ -67,3 +67,39 @@ services:
       timeout: 5s
       retries: 10
       start_period: 3s
+
+  api-db:
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/health"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 3s
+  
+  db:
+    build:
+      context: ./src/db
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/tmp
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_DB=timeseries
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "timeseries"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
