@@ -2,10 +2,12 @@
 
 The original challenge is described [here](./challenge/README.md).
 
-## Most simple solution
-
+## Approach to solution
 The idea is to have the most simple solution that "just works".
 From there multiple improvements will/can be made.
+
+### Streamlit app
+The frontend is implemented in Python with Streamlit. See [the Streamlit project](./src/streamlit).
 
 1. Single page application with streamlit
 2. data is loaded into memory
@@ -13,8 +15,6 @@ From there multiple improvements will/can be made.
 4. map of assets (and colored by selected signals)
 5. plotly chart with time series
 6. export button
-
-## Improvements
 
 ### Containerization
 Using docker and docker compose. See all Dockerfiles and the [compose file](./compose.yaml).
@@ -40,11 +40,25 @@ potentially for adding data:
 - `POST /api/assets`
 - `POST /api/signals`
 
+### DB for storing assets and signals
+The DB schema is implemented in Postgres. See [the DB project](./src/db).
+
+- run app pointing to api and DB with `docker compose up --build app-api-db`
+- run app pointing to api and DB with debugger `docker compose up --build app-api-db-debug`
+
+The data is read from the same files as in the original challenge, inserted into the DB upon initialization.
+
 ### Not covered yet
-- Add DB for storing assets and signals (postgres)
 - Add frontend framework (typescript/react)
-- Add message queue for realtime data updates (rabbitmq)
-- testing strategy
+- Add message queue for realtime data updates (rabbitmq) - published by write endpoints in API
+
+## Some thoughts on testing
+- Unit tests for API (nunit)
+- Integration tests for API (postman collection, docker compose)
+- Load testing for API (k6)
+- Unit tests for Streamlit app (pytest)
+- Integration tests for Streamlit app (cypress, docker compose)
+- Load testing for Streamlit app (k6)
 
 ## Time spent
 
@@ -55,3 +69,5 @@ potentially for adding data:
 | 2024-11-14 | 0.5 | Containerization, Dockerfile, compose file |
 | 2024-11-15 | 2.0 | REST API, API project |
 | 2024-11-15 | 1.0 | hooking-up app to API |
+| 2024-11-17 | 1.0 | DB project |
+| 2024-11-17 | 0.5 | hooking up DB to API |

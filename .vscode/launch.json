@@ -15,7 +15,7 @@
             "env": {
                 "DATA_PROVIDER": "${input:provider}",
                 "DATA_PATH": "${workspaceFolder}/data",
-                "DATA_HOST": "http://localhost:8080"
+                "DATA_HOST": "http://localhost:${input:api-port}"
             }
         },
         {
@@ -42,7 +42,8 @@
             "type": "pickString",
             "options": [
                 "local-data-debug",
-                "remote-data-debug"
+                "remote-data-debug",
+                "remote-data-db-debug"
             ]
         },
         {
@@ -50,6 +51,12 @@
             "description": "Data provider",
             "type": "pickString",
             "options": ["LOCAL", "REMOTE"]
+        },
+        {
+            "id": "api-port",
+            "description": "API port",
+            "type": "pickString",
+            "options": ["8080", "8081"]
         }
     ]
 }

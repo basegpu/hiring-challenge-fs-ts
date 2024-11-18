@@ -2,13 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "local-data-debug",
-            "command": "docker compose up -d --build --remove-orphans app-local-debug",
+            "label": "local-data",
+            "command": "docker compose up -d --build --remove-orphans app-local",
             "type": "shell"
         },
         {
-            "label": "local-data",
-            "command": "docker compose up -d --build --remove-orphans app-local",
+            "label": "local-data-debug",
+            "command": "docker compose up -d --build --remove-orphans app-local-debug",
             "type": "shell"
         },
         {
@@ -19,6 +19,16 @@
         {
             "label": "remote-data-debug",
             "command": "docker compose up -d --build --remove-orphans app-api-local-debug",
+            "type": "shell"
+        },
+        {
+            "label": "remote-data-db",
+            "command": "docker compose up -d --build --remove-orphans app-api-db",
+            "type": "shell"
+        },
+        {
+            "label": "remote-data-db-debug",
+            "command": "docker compose up -d --build --remove-orphans app-api-db-debug",
             "type": "shell"
         }
     ]

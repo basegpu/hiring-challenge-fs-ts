@@ -1,62 +1,91 @@
 services:
-  app-local:
+
+  app-build:
     build:
       context: ./src/streamlit
       dockerfile: Dockerfile
-    volumes:
-      - ./data:/app/data
-    environment:
-      - STREAMLIT_ENV=production
-      - DATA_PROVIDER=LOCAL
-      - DATA_PATH=./data
+  
+  app-base:
+    extends:
+      service: app-build
     ports:
       - "8502:8501"
-  
-  app-local-debug:
-    build:
-      context: ./src/streamlit
-      dockerfile: Dockerfile
+
+  app-debug-base:
+    extends:
+      service: app-build
+    ports:
+      - "8502:8501"
+      - "9001:9001"
+
+  app-local:
+    extends:
+      service: app-base
     volumes:
       - ./data:/app/data
-    ports:
-      - "8503:8501" 
-      - "9001:9001"
+    environment:
+      - STREAMLIT_ENV=production
+      - DATA_PROVIDER=LOCAL
+      - DATA_PATH=./data
+  
+  app-local-debug:
+    extends:
+      service: app-debug-base
+    volumes:
+      - ./data:/app/data
     environment:
       - DATA_PROVIDER=LOCAL
       - DATA_PATH=./data
       - DEBUG=1
   
-  app-api-local:
-    build:
-      context: ./src/streamlit
-      dockerfile: Dockerfile
-    ports:
-      - "8504:8501"
+  app-api-base:
+    extends:
+      service: app-base
     environment:
       - STREAMLIT_ENV=production
       - DATA_PROVIDER=REMOTE
       - DATA_HOST=http://api-local:8080
+
+  app-api-local:
+    extends:
+      service: app-api-base
     depends_on:
       - api-local
   
-  app-api-local-debug:
-    build:
-      context: ./src/streamlit
-      dockerfile: Dockerfile
-    ports:
-      - "8505:8501"
-      - "9001:9001"
+  app-api-db:
+    extends:
+      service: app-api-base
+    depends_on:
+      - api-db
+  
+  app-api-debug-base:
+    extends:
+      service: app-debug-base
     environment:
       - DATA_PROVIDER=REMOTE
       - DATA_HOST=http://api-local:8080
       - DEBUG=1
+  
+  app-api-local-debug:
+    extends:
+      service: app-api-debug-base
     depends_on:
       - api-local
+  
+  app-api-db-debug:
+    extends:
+      service: app-api-debug-base
+    depends_on:
+      - api-db
 
-  api-local:
+  api-base:
     build:
       context: ./src/api
       dockerfile: Dockerfile
+
+  api-local:
+    extends:
+      service: api-base
     ports:
       - "8080:8080"
     volumes:
@@ -69,9 +98,8 @@ services:
       start_period: 3s
 
   api-db:
-    build:
-      context: ./src/api
-      dockerfile: Dockerfile
+    extends:
+      service: api-base
     ports:
       - "8081:8080"
     environment:
