@@ -15,7 +15,7 @@
             "env": {
                 "DATA_PROVIDER": "${input:provider}",
                 "DATA_PATH": "${workspaceFolder}/data",
-                "DATA_HOST": "http://localhost:${input:api-port}"
+                "DATA_HOST": "http://localhost:8080"
             }
         },
         {
@@ -51,12 +51,6 @@
             "description": "Data provider",
             "type": "pickString",
             "options": ["LOCAL", "REMOTE"]
-        },
-        {
-            "id": "api-port",
-            "description": "API port",
-            "type": "pickString",
-            "options": ["8080", "8081"]
         }
     ]
 }

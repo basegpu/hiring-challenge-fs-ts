@@ -1,80 +1,82 @@
 services:
 
-  app-build:
+  app-base:
     build:
       context: ./src/streamlit
       dockerfile: Dockerfile
+    ports:
+      - "8502:8501"
+    environment:
+      - DATA_PROVIDER=LOCAL
+      - DATA_PATH=./data
   
-  app-base:
+  app-base-prod:
     extends:
-      service: app-build
-    ports:
-      - "8502:8501"
+      service: app-base
+    environment:
+      - STREAMLIT_ENV=production
 
-  app-debug-base:
+  app-base-debug:
     extends:
-      service: app-build
+      service: app-base
     ports:
-      - "8502:8501"
       - "9001:9001"
+    environment:
+      - DEBUG=1
 
   app-local:
     extends:
-      service: app-base
+      service: app-base-prod
     volumes:
       - ./data:/app/data
-    environment:
-      - STREAMLIT_ENV=production
-      - DATA_PROVIDER=LOCAL
-      - DATA_PATH=./data
   
   app-local-debug:
     extends:
-      service: app-debug-base
+      service: app-base-debug
     volumes:
       - ./data:/app/data
-    environment:
-      - DATA_PROVIDER=LOCAL
-      - DATA_PATH=./data
-      - DEBUG=1
   
   app-api-base:
     extends:
-      service: app-base
+      service: app-base-prod
     environment:
-      - STREAMLIT_ENV=production
       - DATA_PROVIDER=REMOTE
-      - DATA_HOST=http://api-local:8080
 
   app-api-local:
     extends:
       service: app-api-base
+    environment:
+      - DATA_HOST=http://api-local:8080
     depends_on:
       - api-local
   
   app-api-db:
     extends:
       service: app-api-base
+    environment:
+      - DATA_HOST=http://api-db:8080
     depends_on:
       - api-db
   
-  app-api-debug-base:
+  app-api-base-debug:
     extends:
-      service: app-debug-base
+      service: app-base-debug
     environment:
       - DATA_PROVIDER=REMOTE
-      - DATA_HOST=http://api-local:8080
-      - DEBUG=1
   
   app-api-local-debug:
     extends:
-      service: app-api-debug-base
+      service: app-api-base-debug
+    environment:
+      - DATA_HOST=http://api-local:8080
     depends_on:
       - api-local
   
   app-api-db-debug:
     extends:
-      service: app-api-debug-base
+      service: app-api-base-debug
+    environment:
+      - DATA_HOST=http://api-db:8080
     depends_on:
       - api-db
 
@@ -82,12 +84,12 @@ services:
     build:
       context: ./src/api
       dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
 
   api-local:
     extends:
       service: api-base
-    ports:
-      - "8080:8080"
     volumes:
       - ./data:/app/data
     healthcheck:
@@ -100,8 +102,6 @@ services:
   api-db:
     extends:
       service: api-base
-    ports:
-      - "8081:8080"
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -111,7 +111,7 @@ services:
     depends_on:
       - db
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
       interval: 1s
       timeout: 5s
       retries: 10

@@ -3,32 +3,32 @@
     "tasks": [
         {
             "label": "local-data",
-            "command": "docker compose up -d --build --remove-orphans app-local",
+            "command": "docker compose up --build --remove-orphans app-local; docker compose down",
             "type": "shell"
         },
         {
             "label": "local-data-debug",
-            "command": "docker compose up -d --build --remove-orphans app-local-debug",
+            "command": "docker compose up --build --remove-orphans app-local-debug; docker compose down",
             "type": "shell"
         },
         {
             "label": "remote-data",
-            "command": "docker compose up -d --build --remove-orphans app-api-local",
+            "command": "docker compose up --build --remove-orphans app-api-local; docker compose down",
             "type": "shell"
         },
         {
             "label": "remote-data-debug",
-            "command": "docker compose up -d --build --remove-orphans app-api-local-debug",
+            "command": "docker compose up --build --remove-orphans app-api-local-debug; docker compose down",
             "type": "shell"
         },
         {
             "label": "remote-data-db",
-            "command": "docker compose up -d --build --remove-orphans app-api-db",
+            "command": "docker compose up --build --remove-orphans app-api-db; docker compose down",
             "type": "shell"
         },
         {
             "label": "remote-data-db-debug",
-            "command": "docker compose up -d --build --remove-orphans app-api-db-debug",
+            "command": "docker compose up --build --remove-orphans app-api-db-debug; docker compose down",
             "type": "shell"
         }
     ]
