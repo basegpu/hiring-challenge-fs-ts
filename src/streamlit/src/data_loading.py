@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import requests
 from typing import List, TypeVar, Type
-from models import Asset, Signal, Measurement
+from models import Asset, Signal, SignalData
 from settings import settings
 
 
@@ -28,12 +28,12 @@ class DataProvider:
         """
         raise NotImplementedError
     
-    def measurements(self, signal_id: int) -> List[Measurement]:
+    def signal_data(self, signal_id: int) -> SignalData:
         """
-        Load measurements from data source for a given signal id.
+        Load signal data (measurements by column)from data source for a given signal id.
         
         Returns:
-            List[Measurement]
+            SignalData
         """
         raise NotImplementedError
 
@@ -81,17 +81,16 @@ class LocalDataProvider(DataProvider):
             return pd.read_csv(self._data_dir / filename, delimiter=delimiter, decimal=",")
         except Exception as e:
             raise Exception(f"Error loading data: {e}")
-
-
-    def measurements(self, signal_id: int) -> List[Measurement]:
-        """Load measurements data from CSV file"""
+    
+    def signal_data(self, signal_id: int) -> SignalData:
+        """Load signal data (measurements by column) from CSV file"""
         data_df = self.load_csv_data("measurements.csv", delimiter="|")
-        return [
-            Measurement(**row)
-            for _, row in data_df[
-                data_df["SignalId"] == signal_id
-            ].iterrows()
-        ]
+        filter = data_df["SignalId"] == signal_id
+        return SignalData(
+            signal_id=signal_id, 
+            timestamps=data_df[filter]["Ts"].tolist(), 
+            values=data_df[filter]["MeasurementValue"].tolist()
+        )
 
 
 class RemoteDataProvider(DataProvider):
@@ -123,12 +122,9 @@ class RemoteDataProvider(DataProvider):
         """Load signals from API"""
         return self._make_typed_request("signals", Signal)
     
-    def measurements(self, signal_id: int) -> List[Measurement]:
-        """Load measurements from API"""
-        return [
-            Measurement(**item)
-            for item in self._make_request(f"data?signalId={signal_id}")
-        ]
+    def signal_data(self, signal_id: int) -> SignalData:
+        """Load signal data (measurements by column) from API"""
+        return SignalData(**self._make_request(f"data?signalId={signal_id}&columns=true"))
 
 
 class DataProviderFactory:

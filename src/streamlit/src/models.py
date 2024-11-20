@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, AliasChoices
-
+from typing import List
 
 class Asset(BaseModel):
     id: int = Field(..., validation_alias=AliasChoices("AssetID", "id"), description="The unique identifier for the asset")
@@ -23,10 +23,13 @@ class Signal(BaseModel):
         return f"{self.name} ({self.unit})"
 
 
-class Measurement(BaseModel):
-    signal_id: int = Field(..., validation_alias=AliasChoices("SignalId", "signalId"), description="The unique identifier for the signal")
-    timestamp: datetime = Field(..., validation_alias=AliasChoices("Ts", "timestamp"), description="The timestamp of the measurement taken")
-    value: float = Field(..., validation_alias=AliasChoices("MeasurementValue", "value"), description="The value of the measurement")
+class SignalData(BaseModel):
+    signal_id: int = Field(..., validation_alias=AliasChoices("signal_id", "signalId"), description="The unique identifier for the signal")
+    timestamps: List[datetime] = Field(..., description="The timestamps for the signal")
+    values: List[float] = Field(..., description="The values for the signal")
+
+    class Config:
+        allow_population_by_field_name = True
 
     def __str__(self):
-        return f"{self.timestamp} - {self.value}"
+        return f"{self.signal.name} - {self.signal.unit}"

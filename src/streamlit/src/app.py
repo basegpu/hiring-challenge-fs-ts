@@ -10,7 +10,7 @@ provider = DataProviderFactory.make()
 # Page config
 st.set_page_config(
     page_title="Time Series Viewer",
-    page_icon="📈",
+    page_icon="⚡",
     layout="wide"
 )
 
@@ -19,10 +19,14 @@ st.title("Time Series Viewer")
 
 # Load data
 @st.cache_data
-def load_measurements_for_signal(signal_id: int) -> pd.DataFrame:
+def data(signal_id: int) -> pd.DataFrame:
     try:
-        measurements = provider.measurements(signal_id)
-        return pd.DataFrame([m.model_dump() for m in measurements]).sort_values(by="timestamp")
+        data = provider.signal_data(signal_id)
+        return pd.DataFrame({
+            "signal_id": [signal_id] * len(data.timestamps),
+            "timestamp": data.timestamps,
+            "value": data.values
+        }).sort_values(by="timestamp")
     except Exception as e:
         st.error(e)
         return pd.DataFrame()
@@ -107,7 +111,7 @@ if not selected_signal_ids:
 # Filter data based on selection
 selected_signals = [signal for signal in signals() if signal.id in selected_signal_ids]
 filtered_df = pd.concat([
-    load_measurements_for_signal(signal_id)
+    data(signal_id)
     for signal_id in selected_signal_ids
 ])
 
