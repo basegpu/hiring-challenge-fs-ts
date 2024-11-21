@@ -53,12 +53,17 @@ The data is read from the same files as in the original challenge, inserted into
 - Add message queue for realtime data updates (rabbitmq) - published by write endpoints in API
 
 ## Some thoughts on testing
+Testing in its various forms is important and should be carefully laid out. Having tests for the sake of having tests is not the solution.
+
+Different test setups needed for this challenge:
 - Unit tests for API (nunit)
-- Integration tests for API (postman collection, docker compose)
-- Load testing for API (k6)
+- Integration tests for API (dotnet testclient, mocking db with in-memory repository)
+- Load testing for API (postman collection, docker compose)
 - Unit tests for Streamlit app (pytest)
 - Integration tests for Streamlit app (cypress, docker compose)
-- Load testing for Streamlit app (k6)
+
+Because having test setups for the different testing levels takes time, I focused on the most important one.
+
 
 ## Time spent
 

@@ -12,4 +12,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Copy data files to output directory - if they exist -->
+    <None Include="../../../data/*" CopyToOutputDirectory="PreserveNewest" LinkBase="data/" />
+  </ItemGroup>
+
 </Project>
