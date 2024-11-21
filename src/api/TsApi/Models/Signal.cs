@@ -10,7 +10,7 @@ namespace TsApi.Models
         [Key]
         [Column("id", TypeName = "integer")]
         [JsonProperty("SignalID", Required = Required.Always)]
-        public int Id { get; set; }
+        public int Id { get; set; } 
 
         [Column("guid", TypeName = "uuid")]
         [JsonProperty("SignalGId", Required = Required.Always)]
@@ -22,10 +22,10 @@ namespace TsApi.Models
 
         [Column("name", TypeName = "text")]
         [JsonProperty("SignalName", Required = Required.Always)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Column("unit", TypeName = "text")]
         [JsonProperty("Unit", Required = Required.Always)]
-        public string Unit { get; set; }
+        public string Unit { get; set; } = string.Empty;
     }
 } 

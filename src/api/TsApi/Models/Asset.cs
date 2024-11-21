@@ -13,7 +13,7 @@ namespace TsApi.Models
 
         [Column("description", TypeName = "text")]
         [JsonProperty("descri", Required = Required.Always)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Column("latitude", TypeName = "float")]
         [JsonProperty("Latitude", Required = Required.Always)]

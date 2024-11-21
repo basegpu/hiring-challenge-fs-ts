@@ -16,9 +16,12 @@ namespace TsApi.Repositories
             var jsonPath = Path.Combine(AppContext.BaseDirectory, "data", "signals.json");
             var json = File.ReadAllText(jsonPath);
             var signals = JsonConvert.DeserializeObject<List<Signal>>(json);
-            foreach (var signal in signals)
+            if (signals != null)
             {
-                _signals[signal.Id] = signal;
+                foreach (var signal in signals)
+                {
+                    _signals[signal.Id] = signal;
+                }
             }
         }
 
@@ -38,8 +41,14 @@ namespace TsApi.Repositories
 
         public Task<Signal?> GetByIdAsync(int id)
         {
-            _signals.TryGetValue(id, out var signal);
-            return Task.FromResult(signal);
+            if (_signals.TryGetValue(id, out var signal))
+            {
+                return Task.FromResult<Signal?>(signal);
+            }
+            else
+            {
+                return Task.FromResult<Signal?>(null);
+            }
         }
     }
 } 

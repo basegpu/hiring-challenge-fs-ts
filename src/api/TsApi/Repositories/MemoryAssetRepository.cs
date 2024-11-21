@@ -18,9 +18,12 @@ namespace TsApi.Repositories
             {
                 var json = File.ReadAllText(jsonPath);
                 var assets = JsonConvert.DeserializeObject<List<Asset>>(json);
-                foreach (var asset in assets)
+                if (assets != null)
                 {
-                    _assets[asset.Id] = asset;
+                    foreach (var asset in assets)
+                    {
+                        _assets[asset.Id] = asset;
+                    }
                 }
             }
         }

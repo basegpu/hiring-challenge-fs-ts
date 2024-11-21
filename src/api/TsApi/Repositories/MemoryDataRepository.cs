@@ -37,7 +37,8 @@ namespace TsApi.Repositories
                         return null;
                     }
                     })
-                    .Where(data => data != null); // Filter out null entries
+                    .Where(data => data != null)
+                    .Cast<TimeSeriesData>();
             }
         }
 
