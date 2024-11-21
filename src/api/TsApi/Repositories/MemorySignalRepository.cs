@@ -14,13 +14,16 @@ namespace TsApi.Repositories
         public MemorySignalRepository()
         {
             var jsonPath = Path.Combine(AppContext.BaseDirectory, "data", "signals.json");
-            var json = File.ReadAllText(jsonPath);
-            var signals = JsonConvert.DeserializeObject<List<Signal>>(json);
-            if (signals != null)
+            if (File.Exists(jsonPath))
             {
-                foreach (var signal in signals)
+                var json = File.ReadAllText(jsonPath);
+                var signals = JsonConvert.DeserializeObject<List<Signal>>(json);
+                if (signals != null)
                 {
-                    _signals[signal.Id] = signal;
+                    foreach (var signal in signals)
+                    {
+                        _signals[signal.Id] = signal;
+                    }
                 }
             }
         }
