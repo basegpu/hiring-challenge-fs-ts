@@ -17,7 +17,7 @@ The frontend is implemented in Python with Streamlit. See [the Streamlit project
 6. export button
 
 ### Containerization
-Using docker and docker compose. See all Dockerfiles and the [compose file](./compose.yaml).
+Using docker and docker compose. See all Dockerfiles and the [compose file](./src/compose.yaml).
 
 - run app with `docker compose up --build app-local`
 - run app with debugger `docker compose up --build app-local-debug`
@@ -62,7 +62,7 @@ Different test setups needed for this challenge:
 - Unit tests for Streamlit app (pytest)
 - Integration tests for Streamlit app (cypress, docker compose)
 
-Because having test setups for the different testing levels takes time, I focused on the most important one.
+Because having test setups for the different testing levels takes time, I focused on the most important one - api testing.
 
 
 ## Time spent
@@ -76,3 +76,5 @@ Because having test setups for the different testing levels takes time, I focuse
 | 2024-11-15 | 1.0 | hooking-up app to API |
 | 2024-11-17 | 1.0 | DB project |
 | 2024-11-17 | 0.5 | hooking up DB to API |
+
+total: 6.5 hours, plus some offline thinking (not tracked, maybe 1 hour)

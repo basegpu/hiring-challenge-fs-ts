@@ -29,7 +29,7 @@ class SignalData(BaseModel):
     values: List[float] = Field(..., description="The values for the signal")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
     def __str__(self):
         return f"{self.signal.name} - {self.signal.unit}"

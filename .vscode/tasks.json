@@ -1,35 +1,32 @@
 {
     "version": "2.0.0",
+    "options": {
+        "env": {
+            "COMPOSE_CMD": "docker compose -p ts-viewer -f ${workspaceFolder}/src/compose.yaml"
+        }
+    },
     "tasks": [
         {
-            "label": "local-data",
-            "command": "docker compose up --build --remove-orphans app-local; docker compose down",
+            "label": "docker-compose",
+            "command": "${COMPOSE_CMD} up --build --remove-orphans ${input:service}; ${COMPOSE_CMD} down",
             "type": "shell"
         },
         {
-            "label": "local-data-debug",
-            "command": "docker compose up --build --remove-orphans app-local-debug; docker compose down",
+            "label": "docker-compose-debug",
+            "command": "${COMPOSE_CMD} up --build --remove-orphans ${input:service}-debug; ${COMPOSE_CMD} down",
             "type": "shell"
-        },
+        }
+    ],
+    "inputs": [
         {
-            "label": "remote-data",
-            "command": "docker compose up --build --remove-orphans app-api-local; docker compose down",
-            "type": "shell"
-        },
-        {
-            "label": "remote-data-debug",
-            "command": "docker compose up --build --remove-orphans app-api-local-debug; docker compose down",
-            "type": "shell"
-        },
-        {
-            "label": "remote-data-db",
-            "command": "docker compose up --build --remove-orphans app-api-db; docker compose down",
-            "type": "shell"
-        },
-        {
-            "label": "remote-data-db-debug",
-            "command": "docker compose up --build --remove-orphans app-api-db-debug; docker compose down",
-            "type": "shell"
+            "id": "service",
+            "description": "Service to start",
+            "type": "pickString",
+            "options": [
+                "app-local",
+                "app-api-local",
+                "app-api-db",
+            ]
         }
     ]
 }

@@ -32,20 +32,10 @@
                     "remoteRoot": "/app/src/"
                 }
             ],
-            "preLaunchTask": "${input:compose-up}"
+            "preLaunchTask": "docker-compose-debug"
         }
     ],
     "inputs": [
-        {
-            "id": "compose-up",
-            "description": "Start Docker Compose",
-            "type": "pickString",
-            "options": [
-                "local-data-debug",
-                "remote-data-debug",
-                "remote-data-db-debug"
-            ]
-        },
         {
             "id": "provider",
             "description": "Data provider",
